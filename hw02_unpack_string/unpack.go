@@ -17,8 +17,8 @@ func Unpack(str string) (string, error) {
 			return "", ErrInvalidString
 		}
 
-		// если элемент - цифра, то повторяем предыдущий элемент какое-то кол-во раз и записываем
-		// если два элемента подряд цифры -- ошибка
+		// Если элемент - цифра, то повторяем предыдущий элемент какое-то кол-во раз и записываем
+		// Если два элемента подряд цифры -- ошибка
 		if i+1 < len(runes) && runes[i+1] >= '0' && runes[i+1] <= '9' {
 			if i+2 < len(runes) && runes[i+2] >= '0' && runes[i+2] <= '9' {
 				return "", ErrInvalidString
@@ -29,11 +29,9 @@ func Unpack(str string) (string, error) {
 			}
 			i++
 			continue
-
 		}
-		// если текущий и предыдущий элементы просто символы
+		// Если текущий и предыдущий элементы просто символы
 		res.WriteRune(runes[i])
-
 	}
 	return res.String(), nil
 }
