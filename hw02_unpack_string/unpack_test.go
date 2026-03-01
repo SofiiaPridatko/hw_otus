@@ -45,3 +45,8 @@ func TestUnpackInvalidString(t *testing.T) {
 		})
 	}
 }
+
+//func TestString(t *testing.T) {
+//	_, _ = Unpack("aaa10b")
+//	// _, _ = Unpack("Привет Мир")
+//}
