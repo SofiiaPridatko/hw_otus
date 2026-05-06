@@ -68,3 +68,45 @@ func TestRun(t *testing.T) {
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
 }
+
+func TestRunConcurrency(t *testing.T) {
+	defer goleak.VerifyNone(t)
+
+	workersCount := 5
+	tasksCount := 10
+
+	var running int32
+	var maxRunning int32
+
+	release := make(chan struct{})
+	tasks := make([]Task, 0, tasksCount)
+
+	for i := 0; i < tasksCount; i++ {
+		tasks = append(tasks, func() error {
+			current := atomic.AddInt32(&running, 1)
+
+			for {
+				currentMax := atomic.LoadInt32(&maxRunning)
+				if current <= currentMax || atomic.CompareAndSwapInt32(&maxRunning, currentMax, current) {
+					break
+				}
+			}
+
+			<-release
+			atomic.AddInt32(&running, -1)
+			return nil
+		})
+	}
+
+	done := make(chan error, 1)
+	go func() {
+		done <- Run(tasks, workersCount, 1)
+	}()
+
+	require.Eventually(t, func() bool {
+		return atomic.LoadInt32(&maxRunning) == int32(workersCount)
+	}, time.Second, 10*time.Millisecond)
+
+	close(release)
+	require.NoError(t, <-done)
+}
