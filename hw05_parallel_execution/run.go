@@ -30,10 +30,8 @@ func Run(tasks []Task, n, m int) error {
 	worker := func() {
 		defer wg.Done()
 		for task := range taskCh {
-			//fmt.Printf("worker %d got task\n", id)
 			if task() != nil && m > 0 {
 				atomic.AddInt32(&errCount, 1)
-				//fmt.Printf("worker %d got error\n", id)
 			}
 		}
 	}
