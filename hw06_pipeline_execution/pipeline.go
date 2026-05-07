@@ -48,5 +48,6 @@ func orDone(done In, in In) Out {
 
 func drain(in In) {
 	for range in {
+		continue
 	}
 }
