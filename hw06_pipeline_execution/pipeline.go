@@ -25,7 +25,7 @@ func orDone(done In, in In) Out {
 		for {
 			select {
 			case <-done:
-				drain(in)
+				go drain(in)
 				return
 
 			case v, ok := <-in:
@@ -36,7 +36,7 @@ func orDone(done In, in In) Out {
 				select {
 				case out <- v:
 				case <-done:
-					drain(in)
+					go drain(in)
 					return
 				}
 			}
